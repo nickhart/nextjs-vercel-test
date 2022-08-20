@@ -1,8 +1,34 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import {useState} from 'react'
+import {useEffect} from 'react'
+
+function Profile() {
+  const [data, setData] = useState(null)
+  const [isLoading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(true)
+    fetch('/api/hello')
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data)
+        setLoading(false)
+      })
+  }, [])
+
+  if (isLoading) return <p className={styles.code}>Loading...</p>
+  if (!data) return <p className={styles.code}>No profile data</p>
+
+  // XXXNH: not formatted 
+  return (
+      <><h1 className={styles.title}>{data.name}</h1><p className={styles.description}>{data.bio}</p></>
+  )
+}
 
 export default function Home() {
+  const profile = Profile()
   return (
     <div className={styles.container}>
       <Head>
@@ -20,6 +46,8 @@ export default function Home() {
           Get started by editing{' '}
           <code className={styles.code}>pages/index.js</code>
         </p>
+
+        {profile}
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
